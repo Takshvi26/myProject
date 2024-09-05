@@ -20,16 +20,17 @@ jobs:
     
     - name: Terraform Initialization
       run: terraform init
-      working-directory: C:\Users\WeLcome\terraform\myproject
 
     - name: Terraform Plan
       id: plan
       run: terraform plan
-      working-directory: C:\Users\WeLcome\terraform\myproject
     
     - name: Terraform Apply
+      id: apply
       run: terraform apply -auto-approve
-      working-directory: C:\Users\WeLcome\terraform\myproject
+    - name: Deploy to ECS
+      run: |
+        aws ecs update-service --cluster ${terraform output -raw ecs_cluster_id} --service ${terraform output -raw ecs_service_name} --force-new-deployment
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
