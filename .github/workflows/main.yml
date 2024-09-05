@@ -1,0 +1,36 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.4.0
+    
+    - name: Terraform Initialization
+      run: terraform init
+      working-directory: ./terraform # Make sure this is the correct path
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
+      working-directory: ./terraform # Make sure this is the correct path
+    
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ./terraform # Make sure this is the correct path
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-west-2' # Specify the region you are working in
