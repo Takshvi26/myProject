@@ -1,4 +1,4 @@
-provider "aws" {
+provider "terraform" {
 
   region = "us-west-2"
 
